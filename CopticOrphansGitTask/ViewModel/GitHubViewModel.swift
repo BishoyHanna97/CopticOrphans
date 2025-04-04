@@ -15,7 +15,7 @@ class GitHubViewModel {
     
     func fetchPublicRepositories(completion: @escaping (String?) -> Void) {
         isLoading = true
-        let url = "https://api.github.com/search/repositories?q=stars:>0&sort=stars&page=\(currentPage)"
+        let url = "https://api.github.com/search/repositories?q=stars:0&1&2&3&4&5&sort=stars&page=\(currentPage)"
         
         AF.request(url).validate().responseDecodable(of: GitHubResponse.self) { response in
             self.isLoading = false
