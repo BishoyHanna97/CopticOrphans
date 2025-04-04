@@ -37,7 +37,7 @@ class GitHubViewModel {
         isLoading = true
         currentPage = 1
         let trimmedQuery = query.replacingOccurrences(of: " ", with: "")
-
+        
         let url = "https://api.github.com/search/repositories?q=\(trimmedQuery)&sort=stars&page=\(currentPage)"
         
         AF.request(url).validate().responseDecodable(of: GitHubResponse.self) { response in

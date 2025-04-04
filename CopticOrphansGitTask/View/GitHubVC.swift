@@ -13,7 +13,7 @@ class GitHubVC: UIViewController {
     private let tableView = UITableView()
     private let searchBar = UISearchBar()
     private let activityIndicator = UIActivityIndicatorView(style: .large)
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white

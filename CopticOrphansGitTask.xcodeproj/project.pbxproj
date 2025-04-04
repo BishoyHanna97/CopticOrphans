@@ -159,6 +159,7 @@
 		7699623E2D9F198100E1007D /* View */ = {
 			isa = PBXGroup;
 			children = (
+				76A6076F2D9FC12F009816BD /* GitHubRepoCell.swift */,
 				7699628A2D9F1F5D00E1007D /* AuthVC.swift */,
 				7699628C2D9F1F8600E1007D /* GitHubVC.swift */,
 			);
@@ -185,7 +186,6 @@
 		76A6076E2D9FC108009816BD /* UI Components */ = {
 			isa = PBXGroup;
 			children = (
-				76A6076F2D9FC12F009816BD /* GitHubRepoCell.swift */,
 				76A607712D9FC1D8009816BD /* SocialButton.swift */,
 				76A607732D9FC211009816BD /* CustomButton.swift */,
 				76A607752D9FC245009816BD /* CustomTextField.swift */,
