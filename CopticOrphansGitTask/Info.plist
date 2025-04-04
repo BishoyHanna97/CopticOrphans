@@ -2,18 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+		<string>fb-messenger-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
+	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLName</key>
-			<string>com.uaebarq.CopticOrphansGitTask</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>114479164619-nmbd9guactnrr8fuogvdue60ubmneh0e</string>
-			</array>
-		</dict>
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
@@ -24,9 +21,21 @@
 				<string>fb974800271447143</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.uaebarq.CopticOrphansGitTask</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.114479164619-nmbd9guactnrr8fuogvdue60ubmneh0e</string>
+			</array>
+		</dict>
 	</array>
 	<key>FacebookAppID</key>
 	<string>974800271447143</string>
+	<key>FacebookClientToken</key>
+	<string>ea347c03e55c77f48e646b13c5601c53</string>
 	<key>FacebookDisplayName</key>
 	<string>CopticOrphans</string>
 	<key>UIApplicationSceneManifest</key>

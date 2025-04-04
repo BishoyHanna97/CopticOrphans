@@ -14,13 +14,16 @@ class AuthVC: UIViewController {
     
     private let viewModel = AuthViewModel()
     
-    private let emailTextField = UITextField()
-    private let passwordTextField = UITextField()
-    private let loginButton = UIButton()
-    private let registerButton = UIButton()
-    private let googleLoginButton = UIButton()
-    private let facebookLoginButton = UIButton()
-    private let errorLabel = UILabel()
+    // UI Elements
+        private let containerView = UIView()
+        private let logoImageView = UIImageView()
+        private let emailTextField = CustomTextField(placeholder: "Email", icon: "envelope.fill")
+        private let passwordTextField = CustomTextField(placeholder: "Password", icon: "lock.fill", isSecure: true)
+        private let loginButton = CustomButton(title: "Login", backgroundColor: UIColor.systemBlue)
+        private let registerButton = CustomButton(title: "Register", backgroundColor: UIColor.systemGreen)
+        private let googleLoginButton = SocialButton(title: " Sign in with Google", iconName: "g.circle.fill", backgroundColor: UIColor.systemRed)
+        private let facebookLoginButton = SocialButton(title: " Sign in with Facebook", iconName: "f.circle.fill", backgroundColor: UIColor.systemBlue)
+        private let errorLabel = UILabel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,49 +32,64 @@ class AuthVC: UIViewController {
     }
     
     private func setupUI() {
-        emailTextField.placeholder = "Email"
-        emailTextField.borderStyle = .roundedRect
-        emailTextField.keyboardType = .emailAddress
-        emailTextField.textContentType = .emailAddress
+            view.backgroundColor = .white
+
+            // Configure container
+            containerView.backgroundColor = .white
+            containerView.layer.cornerRadius = 15
+            containerView.layer.shadowColor = UIColor.black.cgColor
+            containerView.layer.shadowOpacity = 0.1
+            containerView.layer.shadowRadius = 8
+            containerView.translatesAutoresizingMaskIntoConstraints = false
+            
+            // Logo
+            logoImageView.image = UIImage(named: "app_logo") // Replace with your actual logo
+            logoImageView.contentMode = .scaleAspectFit
+            logoImageView.translatesAutoresizingMaskIntoConstraints = false
+            
+            // Error Label
+            errorLabel.textColor = .red
+            errorLabel.textAlignment = .center
+            errorLabel.numberOfLines = 0
+            errorLabel.isHidden = true
+            
+            // StackView for form elements
+            let stackView = UIStackView(arrangedSubviews: [emailTextField, passwordTextField, loginButton, registerButton, googleLoginButton, facebookLoginButton, errorLabel])
+            stackView.axis = .vertical
+            stackView.spacing = 12
+            stackView.translatesAutoresizingMaskIntoConstraints = false
+            
+            // Add subviews
+            view.addSubview(containerView)
+            containerView.addSubview(logoImageView)
+            containerView.addSubview(stackView)
+            
+            // Constraints
+            NSLayoutConstraint.activate([
+                containerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                containerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+                containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+                containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+                
+                logoImageView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 20),
+                logoImageView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+                logoImageView.heightAnchor.constraint(equalToConstant: 80),
+                logoImageView.widthAnchor.constraint(equalToConstant: 80),
+                
+                stackView.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 20),
+                stackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 20),
+                stackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -20),
+                stackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -20)
+            ])
+            
+            // Button Actions
+            loginButton.addTarget(self, action: #selector(handleLogin), for: .touchUpInside)
+            registerButton.addTarget(self, action: #selector(handleRegister), for: .touchUpInside)
+            googleLoginButton.addTarget(self, action: #selector(handleGoogleLogin), for: .touchUpInside)
+            facebookLoginButton.addTarget(self, action: #selector(handleFacebookLogin), for: .touchUpInside)
+        }
         
-        passwordTextField.placeholder = "Password"
-        passwordTextField.borderStyle = .roundedRect
-        passwordTextField.isSecureTextEntry = true
         
-        loginButton.setTitle("Login", for: .normal)
-        loginButton.backgroundColor = .blue
-        loginButton.addTarget(self, action: #selector(handleLogin), for: .touchUpInside)
-        
-        registerButton.setTitle("Register", for: .normal)
-        registerButton.backgroundColor = .green
-        registerButton.addTarget(self, action: #selector(handleRegister), for: .touchUpInside)
-        
-        googleLoginButton.setTitle("Login with Google", for: .normal)
-        googleLoginButton.backgroundColor = .red
-        googleLoginButton.addTarget(self, action: #selector(handleGoogleLogin), for: .touchUpInside)
-        
-        facebookLoginButton.setTitle("Login with Facebook", for: .normal)
-        facebookLoginButton.backgroundColor = .blue
-        facebookLoginButton.addTarget(self, action: #selector(handleFacebookLogin), for: .touchUpInside)
-        
-        errorLabel.textColor = .red
-        errorLabel.textAlignment = .center
-        errorLabel.numberOfLines = 0
-        errorLabel.isHidden = true
-        
-        let stackView = UIStackView(arrangedSubviews: [emailTextField, passwordTextField, loginButton, registerButton, googleLoginButton, facebookLoginButton, errorLabel])
-        stackView.axis = .vertical
-        stackView.spacing = 10
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(stackView)
-        NSLayoutConstraint.activate([
-            stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
-        ])
-    }
     
     @objc private func handleLogin() {
         guard let email = emailTextField.text, let password = passwordTextField.text, !email.isEmpty, !password.isEmpty else {

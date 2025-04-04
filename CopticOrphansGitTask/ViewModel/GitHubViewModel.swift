@@ -36,18 +36,21 @@ class GitHubViewModel {
     func searchRepositories(query: String, completion: @escaping (String?) -> Void) {
         isLoading = true
         currentPage = 1
-        
-        let url = "https://api.github.com/search/repositories?q=\(query)&sort=stars&page=\(currentPage)"
+        let trimmedQuery = query.replacingOccurrences(of: " ", with: "")
+
+        let url = "https://api.github.com/search/repositories?q=\(trimmedQuery)&sort=stars&page=\(currentPage)"
         
         AF.request(url).validate().responseDecodable(of: GitHubResponse.self) { response in
             self.isLoading = false
             switch response.result {
             case .success(let data):
+                print("success")
                 self.repositories = []
                 self.repositories = data.items
                 completion(nil)
             case .failure(let error):
                 let errorMessage = self.getGitHubErrorMessage(error)
+                print(errorMessage)
                 completion(errorMessage)
             }
         }

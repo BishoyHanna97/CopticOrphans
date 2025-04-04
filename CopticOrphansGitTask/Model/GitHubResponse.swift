@@ -14,6 +14,7 @@ struct Repository: Decodable, Identifiable {
     let name: String
     let owner: Owner
     let html_url: String
+    let stargazers_count: Int  // ⭐ New Attribute
 }
 
 struct Owner: Decodable {

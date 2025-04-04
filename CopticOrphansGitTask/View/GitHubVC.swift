@@ -13,15 +13,7 @@ class GitHubVC: UIViewController {
     private let tableView = UITableView()
     private let searchBar = UISearchBar()
     private let activityIndicator = UIActivityIndicatorView(style: .large)
-    private let errorLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .red
-        label.textAlignment = .center
-        label.numberOfLines = 0
-        label.isHidden = true
-        return label
-    }()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -31,38 +23,28 @@ class GitHubVC: UIViewController {
     }
     
     private func setupUI() {
-        
         navigationItem.hidesBackButton = true
         
         searchBar.delegate = self
         searchBar.placeholder = "Search repositories"
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(GitHubRepoCell.self, forCellReuseIdentifier: GitHubRepoCell.identifier)
         
-        // Add the activity indicator and error label to the view
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         activityIndicator.color = .red
+        activityIndicator.hidesWhenStopped = true
         
-        errorLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(activityIndicator)
-        view.addSubview(errorLabel)
         
-        // Create a stack view to contain search bar and table view
         let stackView = UIStackView(arrangedSubviews: [searchBar, tableView])
         stackView.axis = .vertical
         stackView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(stackView)
         
-        // Activate constraints for activity indicator, error label, and stack view
         NSLayoutConstraint.activate([
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            
-            errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            errorLabel.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 10),
-            errorLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            errorLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
             stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -73,15 +55,22 @@ class GitHubVC: UIViewController {
     
     private func fetchRepositories() {
         activityIndicator.startAnimating()
-        errorLabel.isHidden = true
+        print("Fetching repositories...")
         viewModel.fetchPublicRepositories { error in
             DispatchQueue.main.async {
                 self.activityIndicator.stopAnimating()
                 if let error = error {
-                    self.errorLabel.text = error
-                    self.errorLabel.isHidden = false
+                    print("Error is \(error)")
+                    
+                    // Create an alert to show the error message
+                    let alert = UIAlertController(title: "Error", message: error, preferredStyle: .alert)
+                    
+                    // Add OK button to dismiss the alert
+                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                    
+                    // Present the alert
+                    self.present(alert, animated: true, completion: nil)
                 } else {
-                    self.errorLabel.isHidden = true
                     self.tableView.reloadData()
                 }
             }
@@ -90,21 +79,24 @@ class GitHubVC: UIViewController {
     
     private func searchRepositories(query: String) {
         activityIndicator.startAnimating()
-        errorLabel.isHidden = true
+        print("Query: \(query)")
         viewModel.searchRepositories(query: query) { error in
             DispatchQueue.main.async {
                 self.activityIndicator.stopAnimating()
                 if let error = error {
-                    self.errorLabel.text = error
-                    self.errorLabel.isHidden = false
+                    print("Error: \(error)")
+                    
+                    let alert = UIAlertController(title: "Error", message: error, preferredStyle: .alert)
+                    
+                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                    
+                    self.present(alert, animated: true, completion: nil)
                 } else {
-                    self.errorLabel.isHidden = true
                     self.tableView.reloadData()
                 }
             }
         }
     }
-    
 }
 
 extension GitHubVC: UITableViewDelegate, UITableViewDataSource {
@@ -114,8 +106,9 @@ extension GitHubVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = viewModel.repositories[indexPath.row].name
+        let cell = tableView.dequeueReusableCell(withIdentifier: GitHubRepoCell.identifier, for: indexPath) as! GitHubRepoCell
+        let repo = viewModel.repositories[indexPath.row]
+        cell.configure(with: repo)
         
         if indexPath.row == viewModel.repositories.count - 1 { // Load more when reaching the last item
             if let query = searchBar.text, !query.isEmpty {
@@ -135,5 +128,4 @@ extension GitHubVC: UISearchBarDelegate {
         guard let query = searchBar.text, !query.isEmpty else { return }
         searchRepositories(query: query)
     }
-    
 }
